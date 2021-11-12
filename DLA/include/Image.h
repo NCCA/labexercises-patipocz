@@ -48,7 +48,8 @@ class Image
 
         RGBA getPixel(size_t _x, size_t _y);
         void setPixel(size_t _x, size_t _y, RGBA _p);
-        
+        void setPixel(size_t _x, size_t _y, unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a);
+
     private : 
         size_t m_width=0;
         size_t m_height=0;

@@ -1,5 +1,6 @@
 #include "Image.h"
 #include <cstring>
+#include <OpenImageIO/imageio.h>
 
 
 Image::Image(size_t _w, size_t _h) : m_width{_w}, m_height{_h}
@@ -54,4 +55,10 @@ bool Image::write(const std::string &_frame) const
 void Image::setPixel(size_t _x, size_t _y, RGBA _p)
 {
     m_pixels[_y*m_width + _x] = _p;
+}
+
+
+void Image::setPixel(size_t _x, size_t _y, unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a)
+{
+    m_pixels[_y*m_width + _x] = RGBA(_r,_g,_b,_a);
 }

@@ -17,7 +17,13 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 # Now we add our target executable and the file it is built from.
 add_executable(DLA)
-target_sources(DLA PRIVATE src/main.cpp src/Image.cpp include/Image.h)
+target_sources(DLA PRIVATE 
+   src/main.cpp 
+   src/Image.cpp 
+   src/Walker.cpp 
+   include/Image.h  
+   include/Walker.h)
+   
 target_link_libraries(DLA PRIVATE OpenImageIO::OpenImageIO OpenImageIO::OpenImageIO_Util OpenMP::OpenMP_CXX)
 
 add_compile_options(-Wall -Wextra ) #-pedantic)
