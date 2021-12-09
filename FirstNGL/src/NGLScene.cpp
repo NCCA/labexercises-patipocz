@@ -4,12 +4,15 @@
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/VAOPrimitives.h>
+#include <ngl/ShaderLib.h>
+#include <ngl/Util.h>
 #include <iostream>
+#include <ngl/Transformation.h>
 
 NGLScene::NGLScene()
 {
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
-  setTitle("Blank NGL");
+  setTitle("First NGL Patty");
 }
 
 
@@ -24,7 +27,9 @@ void NGLScene::resizeGL(int _w , int _h)
 {
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
-}
+  m_project=ngl::perspective(45.0f,
+  static_cast<float>(_w)/_h,0.1f,20.0f);
+  }
 
 
 void NGLScene::initializeGL()
@@ -37,16 +42,46 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
+  ngl::VAOPrimitives::createSphere("sphere",1.0f,20);
+  ngl::ShaderLib::loadShader("Colour","shaders/ColourVertex.glsl",
+  "shaders/ColourFragment.glsl");
+  ngl::ShaderLib::use("Colour");
+  m_view = ngl::lookAt({5,5,5},{0,0,0},{0,1,0});
 
 }
 
-
+void NGLScene::loadMatrixToShader()
+{
+  ngl::ShaderLib::setUniform("MVP",m_project*m_view*m_modelTx);
+}
 
 void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
+  glPointSize(4);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  
+  ngl::Transformation tx;
+  tx.setPosition(-1,0,0);
+  tx.setScale(1,2,1);
+  tx.setRotation(40,0,0);
+  m_modelTx=tx.getMatrix();
+  loadMatrixToShader();
+  ngl::VAOPrimitives::draw("sphere");
+  tx.reset();
+  tx.setPosition(0,0,2);
+  m_modelTx=tx.getMatrix();
+  loadMatrixToShader();
+  ngl::VAOPrimitives::draw(ngl::teapot);
+  tx.reset();
+  tx.setScale(0.1f,0.1f,0.1f);
+  tx.setPosition(0,0,-4);
+  m_modelTx=tx.getMatrix();
+  loadMatrixToShader();
+  ngl::VAOPrimitives::draw(ngl::bunny);
+
 
 }
 
